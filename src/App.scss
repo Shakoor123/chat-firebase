@@ -1,6 +1,100 @@
 $background: linear-gradient(#e84a4a, #6a74ea);
+$blue: #1122da;
 .app {
-  height: 100vh;
   background: $background;
   color: white;
+  width: 100vw;
+  height: 100vh;
+  .register {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .registerWrapper {
+      box-shadow: 3px 3px 9px 1px rgba(0, 0, 0, 0.51) inset;
+      -webkit-box-shadow: 3px 3px 9px 1px rgba(0, 0, 0, 0.51) inset;
+      -moz-box-shadow: 3px 3px 9px 1px rgba(0, 0, 0, 0.51) inset;
+      padding: 30px;
+      border: 2px solid white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      .title {
+        font-size: 28px;
+        font-weight: 600;
+        margin: 20px 0;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        .inputWrapper {
+          width: 300px;
+          background-color: white;
+          margin: 20px 0;
+          display: flex;
+          padding: 10px;
+          .icon {
+            color: black;
+          }
+          .input {
+            width: 100%;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            margin-left: 10px;
+            color: $blue;
+          }
+          .eye {
+            cursor: pointer;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+          }
+        }
+        .fileWrapper {
+          width: 300px;
+          margin: 10px 0;
+          display: flex;
+          padding: 10px;
+          justify-content: space-between;
+          align-items: center;
+          label {
+            cursor: pointer;
+            .imageIcon {
+              width: 50px;
+              height: 50px;
+            }
+          }
+          .profile {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+          }
+        }
+        .submit {
+          background-color: #6a74ea;
+          border: none;
+          width: 100%;
+          height: 35px;
+          color: white;
+          font-size: 16px;
+          letter-spacing: 1.2px;
+          cursor: pointer;
+          border: 0.8px solid white;
+          margin-bottom: 10px;
+          &:hover {
+            background-color: #e84a4a;
+          }
+        }
+        .redirect {
+          cursor: pointer;
+          font-weight: 400;
+          color: black;
+        }
+      }
+    }
+  }
 }
