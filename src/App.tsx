@@ -1,6 +1,7 @@
 import reactLogo from "./assets/react.svg";
 import React from "react";
 import "./App.scss";
+import "./Responsive.scss";
 import Register from "./pages/Register/Register";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Login from "./pages/Login/Login";
