@@ -5,11 +5,15 @@ import { Link } from "react-router-dom";
 import eye from "../../assets/eye.jpg";
 const Login = () => {
   const [passwordView, setPasswordView] = useState(false);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log(e.target[0].value);
+  };
   return (
     <div className="register">
       <div className="registerWrapper">
         <span className="title">Login</span>
-        <form>
+        <form onSubmit={handleSubmit}>
           <div className="inputWrapper">
             <PersonIcon className="icon" />
             <input type="text" placeholder="Email" className="input" />
