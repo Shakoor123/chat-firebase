@@ -5,12 +5,22 @@ import PhotoIcon from "@mui/icons-material/Photo";
 import eye from "../../assets/eye.jpg";
 import AbcIcon from "@mui/icons-material/Abc";
 import { Link } from "react-router-dom";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+import { doc, getFirestore, setDoc } from "firebase/firestore";
 import { auth } from "../../firebase";
 const Register = () => {
   const [passwordView, setPasswordView] = useState(false);
   const [fileView, setFileView] = useState(null);
-  const handleSubmit = (e: any) => {
+  const [err, setErr] = useState(false);
+  const db = getFirestore();
+  const handleSubmit = async (e: any) => {
+    setErr(false);
     e.preventDefault();
     console.log(e.target[0].value);
     const username: string = e.target[0].value;
@@ -18,19 +28,59 @@ const Register = () => {
     const password: string = e.target[2].value;
     const file = e.target[3].files[0];
     console.log(username + email + password);
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        console.log(user);
+    try {
+      const res = await createUserWithEmailAndPassword(auth, email, password);
+      const storage = getStorage();
+      const storageRef = ref(storage, `${username}.jpg`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
 
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ..
-      });
+      // Register three observers:
+      // 1. 'state_changed' observer, called any time the state changes
+      // 2. Error observer, called on failure
+      // 3. Completion observer, called on successful completion
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          // Observe state change events such as progress, pause, and resume
+          // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+          const progress =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log("Upload is " + progress + "% done");
+          switch (snapshot.state) {
+            case "paused":
+              console.log("Upload is paused");
+              break;
+            case "running":
+              console.log("Upload is running");
+              break;
+          }
+        },
+        (error) => {
+          setErr(true);
+          // Handle unsuccessful uploads
+        },
+        async () => {
+          // Handle successful uploads on complete
+          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+            await updateProfile(res.user, {
+              displayName: username,
+              photoURL: downloadURL,
+            });
+            // Add a new document in collection "cities"
+            await setDoc(doc(db, "user", res.user.uid), {
+              username,
+              email,
+              photoURL: downloadURL,
+              uid: res.user.uid,
+            });
+          });
+        }
+      );
+    } catch (err) {
+      console.log(err);
+      setErr(true);
+    }
   };
   return (
     <div className="register">
@@ -88,7 +138,11 @@ const Register = () => {
               />
             )}
           </div>
-
+          {err && (
+            <p style={{ color: "red", backgroundColor: "#7f7" }}>
+              Your inputs are not valid
+            </p>
+          )}
           <button className="submit">Register</button>
           <Link to={"/login"}>
             <span className="redirect">Login</span>
