@@ -4,7 +4,7 @@ import LockOpenIcon from "@mui/icons-material/LockOpen";
 import PhotoIcon from "@mui/icons-material/Photo";
 import eye from "../../assets/eye.jpg";
 import AbcIcon from "@mui/icons-material/Abc";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import {
   getStorage,
@@ -18,6 +18,7 @@ const Register = () => {
   const [passwordView, setPasswordView] = useState(false);
   const [fileView, setFileView] = useState(null);
   const [err, setErr] = useState(false);
+  const navigate = useNavigate();
   const db = getFirestore();
   const handleSubmit = async (e: any) => {
     setErr(false);
@@ -74,6 +75,7 @@ const Register = () => {
               photoURL: downloadURL,
               uid: res.user.uid,
             });
+            navigate("/");
           });
         }
       );
@@ -138,11 +140,7 @@ const Register = () => {
               />
             )}
           </div>
-          {err && (
-            <p style={{ color: "red", backgroundColor: "#7f7" }}>
-              Your inputs are not valid
-            </p>
-          )}
+          {err && <p style={{ color: "yellow" }}>Your inputs are not valid</p>}
           <button className="submit">Register</button>
           <Link to={"/login"}>
             <span className="redirect">Login</span>

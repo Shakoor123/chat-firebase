@@ -1,13 +1,26 @@
 import React, { useState } from "react";
 import PersonIcon from "@mui/icons-material/Person";
 import LockOpenIcon from "@mui/icons-material/LockOpen";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import eye from "../../assets/eye.jpg";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 const Login = () => {
   const [passwordView, setPasswordView] = useState(false);
-  const handleSubmit = (e) => {
+  const [err, setErr] = useState(false);
+  const auth = getAuth();
+  const navigate = useNavigate();
+  const handleSubmit = async (e: any) => {
+    setErr(false);
     e.preventDefault();
-    console.log(e.target[0].value);
+    const email: string = e.target[0].value;
+    const password: string = e.target[1].value;
+    try {
+      const res = await signInWithEmailAndPassword(auth, email, password);
+      navigate("/");
+    } catch (err) {
+      console.log(err);
+      setErr(true);
+    }
   };
   return (
     <div className="register">
@@ -38,6 +51,9 @@ const Login = () => {
               className="eye"
             />
           </div>
+          {err && (
+            <p style={{ color: "yellow" }}>wrong user email or password</p>
+          )}
           <button className="submit">Login</button>
           <Link to={"/register"}>
             <span className="redirect">Register</span>
