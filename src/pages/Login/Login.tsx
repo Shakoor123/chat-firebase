@@ -4,18 +4,34 @@ import LockOpenIcon from "@mui/icons-material/LockOpen";
 import { Link, useNavigate } from "react-router-dom";
 import eye from "../../assets/eye.jpg";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useDispatch } from "react-redux";
+import { addCurrentUser } from "../../redux/userSlice";
 const Login = () => {
   const [passwordView, setPasswordView] = useState(false);
   const [err, setErr] = useState(false);
   const auth = getAuth();
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+
   const handleSubmit = async (e: any) => {
     setErr(false);
     e.preventDefault();
     const email: string = e.target[0].value;
     const password: string = e.target[1].value;
     try {
-      const res = await signInWithEmailAndPassword(auth, email, password);
+      const res: any = await signInWithEmailAndPassword(auth, email, password);
+      type userres = {
+        username: string;
+        photoURL: string;
+        uid: string;
+      };
+      const cuser = {
+        username: res.user.displayName,
+        photoURL: res.user.photoURL,
+        uid: res.user.uid,
+      };
+      dispatch(addCurrentUser(cuser));
       navigate("/");
     } catch (err) {
       console.log(err);
