@@ -1,11 +1,23 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import eye from "../assets/eye.jpg";
 import User from "./User";
 import { useDispatch } from "react-redux";
 import { addCurrentUser, reset } from "../redux/userSlice";
 import { useNavigate } from "react-router-dom";
-import { collection, getDocs, query, where } from "firebase/firestore";
-import { doc, getFirestore, setDoc } from "firebase/firestore";
+import {
+  doc,
+  getFirestore,
+  setDoc,
+  collection,
+  getDoc,
+  getDocs,
+  query,
+  serverTimestamp,
+  updateDoc,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
+import { addChat } from "../redux/chatSlice";
 
 type sidebarProp = {
   currentUser: any;
@@ -37,8 +49,6 @@ const Sidebar = (currentUser: sidebarProp) => {
       const querySnapshot = await getDocs(q);
       querySnapshot.forEach((doc: any) => {
         if (!doc.data().photoURL) {
-          console.log(doc.data());
-
           setErr(true);
         }
         return setsearchedUser(doc.data());
@@ -53,6 +63,69 @@ const Sidebar = (currentUser: sidebarProp) => {
     dispatch(reset());
     navigate("/login");
   };
+
+  const handleSelect = async () => {
+    const combinedId: string =
+      user.uid > searchedUser.uid
+        ? user.uid + searchedUser.uid
+        : searchedUser.uid + user.uid;
+    try {
+      const res: any = await getDoc(doc(db, "chats", combinedId));
+
+      if (!res.exist) {
+        //create new chat
+        await setDoc(doc(db, "chats", combinedId), { messages: [] });
+
+        await updateDoc(doc(db, "userChats", searchedUser.uid), {
+          [combinedId + ".userInfo"]: {
+            uid: user.uid,
+            username: user.username,
+            photoURL: user.photoURL,
+          },
+          [combinedId + ".date"]: serverTimestamp(),
+        });
+        await updateDoc(doc(db, "userChats", user.uid), {
+          [combinedId + ".userInfo"]: {
+            uid: searchedUser.uid,
+            username: searchedUser.username,
+            photoURL: searchedUser.photoURL,
+          },
+          [combinedId + ".date"]: serverTimestamp(),
+        });
+      }
+    } catch (err) {
+      console.log(err);
+      setsearchedUser(null);
+      setSearchUser("");
+    }
+    setsearchedUser(null);
+    setSearchUser("");
+  };
+
+  // chats mapp section
+
+  const [chats, setChats] = useState([]);
+
+  useEffect(() => {
+    const getChats = () => {
+      const unsub = onSnapshot(doc(db, "userChats", user.uid), (doc: any) => {
+        setChats(doc.data());
+        return () => {
+          unsub();
+        };
+      });
+    };
+    user.uid && getChats();
+  }, [user.uid]);
+
+  const handleChat = (chat: any) => {
+    const combinedId: string =
+      user.uid > chat[1].userInfo.uid
+        ? user.uid + chat[1].userInfo.uid
+        : chat[1].userInfo.uid + user.uid;
+    dispatch(addChat({ chatId: combinedId, user: chat[1].userInfo }));
+  };
+
   return (
     <div className="sidebar">
       <div className="topbar">
@@ -68,6 +141,7 @@ const Sidebar = (currentUser: sidebarProp) => {
       <input
         type="text"
         onKeyDown={handleKey}
+        value={searchUser}
         onChange={(e) => {
           setSearchUser(e.target.value);
         }}
@@ -86,7 +160,11 @@ const Sidebar = (currentUser: sidebarProp) => {
       )}
       <div className="users">
         {searchedUser && (
-          <div className="user" style={{ backgroundColor: "lightgray" }}>
+          <div
+            className="user"
+            style={{ backgroundColor: "lightgray" }}
+            onClick={handleSelect}
+          >
             <div className="usercontainer">
               <img src={searchedUser.photoURL} alt="" className="profile" />
               <div className="details">
@@ -96,8 +174,9 @@ const Sidebar = (currentUser: sidebarProp) => {
             </div>
           </div>
         )}
-
-        <User />
+        {Object.entries(chats).map((chat: any) => (
+          <User key={chat} chat={chat} onClick={handleChat(chat)} />
+        ))}
       </div>
     </div>
   );
