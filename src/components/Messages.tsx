@@ -6,10 +6,9 @@ const Messages = ({ chatId }: any) => {
   const [messages, setMessages] = useState([]);
   const db = getFirestore();
 
-  console.log(chatId);
   useEffect(() => {
-    const getCha = () => {
-      const unsub = onSnapshot(doc(db, "chats", chatId), (doc: any) => {
+    const getCha = async () => {
+      const unsub = await onSnapshot(doc(db, "chats", chatId), (doc: any) => {
         if (doc.exists()) {
           setMessages(doc.data().messages);
         }
@@ -20,12 +19,11 @@ const Messages = ({ chatId }: any) => {
     };
     getCha();
   }, [chatId]);
-  console.log(messages);
 
   return (
     <div className="messages">
       {messages.map((m) => (
-        <Message />
+        <Message message={m} key={m.id} />
       ))}
     </div>
   );

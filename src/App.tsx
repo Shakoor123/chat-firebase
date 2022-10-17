@@ -10,7 +10,6 @@ import { useSelector } from "react-redux";
 
 const App = () => {
   const currentUser = useSelector((state: any) => state.currentUser);
-  console.log(currentUser);
 
   return (
     <div className="app">

@@ -118,14 +118,6 @@ const Sidebar = (currentUser: sidebarProp) => {
     user.uid && getChats();
   }, [user.uid]);
 
-  const handleChat = (chat: any) => {
-    const combinedId: string =
-      user.uid > chat[1].userInfo.uid
-        ? user.uid + chat[1].userInfo.uid
-        : chat[1].userInfo.uid + user.uid;
-    dispatch(addChat({ chatId: combinedId, user: chat[1].userInfo }));
-  };
-
   return (
     <div className="sidebar">
       <div className="topbar">
@@ -175,7 +167,7 @@ const Sidebar = (currentUser: sidebarProp) => {
           </div>
         )}
         {Object.entries(chats).map((chat: any) => (
-          <User key={chat} chat={chat} onClick={handleChat(chat)} />
+          <User key={chat} chat={chat} />
         ))}
       </div>
     </div>
