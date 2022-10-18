@@ -20,7 +20,7 @@ const Chat = () => {
         </div>
       </div>
       <Messages chatId={chat.chatId} />
-      <Input />
+      {chat.chatId != "" && <Input />}
     </div>
   );
 };

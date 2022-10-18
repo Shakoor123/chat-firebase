@@ -32,6 +32,7 @@ const Login = () => {
         uid: res.user.uid,
       };
       dispatch(addCurrentUser(cuser));
+      localStorage.setItem("chat", JSON.stringify(cuser));
       navigate("/");
     } catch (err) {
       console.log(err);

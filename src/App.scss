@@ -204,6 +204,7 @@ $gary: rgb(205, 193, 193);
                 .lastmessage {
                   color: $black;
                   font-size: 14px;
+                  color: rgb(5, 81, 5);
                 }
               }
             }
@@ -234,10 +235,10 @@ $gary: rgb(205, 193, 193);
           }
         }
         .messages {
-          height: calc(100% - 120px);
+          height: calc(100% - 140px);
           overflow: scroll;
           background-color: $background;
-          padding: 0 20px;
+          padding: 10px 20px;
           .message {
             margin-bottom: 10px;
             gap: 20px;
@@ -270,6 +271,7 @@ $gary: rgb(205, 193, 193);
               .messageImage {
                 height: 250px;
                 width: auto;
+                max-width: 380px;
               }
               .span {
                 width: 100%;

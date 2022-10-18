@@ -60,6 +60,7 @@ const Sidebar = (currentUser: sidebarProp) => {
   };
 
   const handleLogout = () => {
+    localStorage.removeItem("chat");
     dispatch(reset());
     navigate("/login");
   };
@@ -161,14 +162,16 @@ const Sidebar = (currentUser: sidebarProp) => {
               <img src={searchedUser.photoURL} alt="" className="profile" />
               <div className="details">
                 <span className="username">{searchedUser.username}</span>
-                <span className="lastmessage">okey bye</span>
+                {/* <span className="lastmessage">okey bye</span> */}
               </div>
             </div>
           </div>
         )}
-        {Object.entries(chats).map((chat: any) => (
-          <User key={chat} chat={chat} />
-        ))}
+        {Object.entries(chats)
+          .sort((a: any, b: any) => b[1]?.date - a[1]?.date)
+          .map((chat: any) => (
+            <User key={chat} chat={chat} />
+          ))}
       </div>
     </div>
   );

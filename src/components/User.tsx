@@ -19,13 +19,14 @@ const User = ({ chat }: any) => {
         : chat[1].userInfo.uid + user.uid;
     await dispatch(addChat({ chatId: combinedId, user: chat[1].userInfo }));
   };
+
   return (
     <div className="user" onClick={handleChats}>
       <div className="usercontainer">
         <img src={chat[1].userInfo.photoURL} alt="" className="profile" />
         <div className="details">
           <span className="username">{chat[1].userInfo.username}</span>
-          <span className="lastmessage">{chat[1].userInfo?.lastmessage}</span>
+          <span className="lastmessage">{chat[1].lastMessage?.text}</span>
         </div>
       </div>
     </div>
