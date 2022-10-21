@@ -30,7 +30,7 @@ type currentUserType = {
 const Sidebar = (currentUser: sidebarProp) => {
   const user: currentUserType = currentUser.currentUser;
   const [searchUser, setSearchUser] = useState("");
-  const [searchedUser, setsearchedUser] = useState(null);
+  const [searchedUser, setsearchedUser] = useState<any>(null);
   const [err, setErr] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();

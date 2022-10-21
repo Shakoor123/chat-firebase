@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 const Message = ({ m }: any) => {
   const user = useSelector((state: any) => state.currentUser);
   const chat = useSelector((state: any) => state.chatReducer);
-  const ref = useRef();
+  const ref = useRef<null | HTMLDivElement>(null);
   useEffect(() => {
     ref.current?.scrollIntoView({ behavior: "smooth" });
   }, [m]);

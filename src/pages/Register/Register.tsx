@@ -23,58 +23,62 @@ const Register = () => {
   const handleSubmit = async (e: any) => {
     setErr(false);
     e.preventDefault();
-    console.log(e.target[0].value);
     const username: string = e.target[0].value;
     const email: string = e.target[1].value;
     const password: string = e.target[2].value;
     const file = e.target[3].files[0];
-    console.log(username + email + password);
-    try {
-      const res = await createUserWithEmailAndPassword(auth, email, password);
-      const storage = getStorage();
-      const storageRef = ref(storage, `${username}.jpg`);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          console.log("Upload is " + progress + "% done");
-          switch (snapshot.state) {
-            case "paused":
-              console.log("Upload is paused");
-              break;
-            case "running":
-              console.log("Upload is running");
-              break;
-          }
-        },
-        (error) => {
-          setErr(true);
-        },
-        async () => {
-          // For instance, get the download URL: https://firebasestorage.googleapis.com/...
-          getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
-            await updateProfile(res.user, {
-              displayName: username,
-              photoURL: downloadURL,
-            });
-            // Add a new document in collection "cities"
-            await setDoc(doc(db, "user", res.user.uid), {
-              username,
-              email,
-              photoURL: downloadURL,
-              uid: res.user.uid,
-            });
-            await setDoc(doc(db, "userChats", res.user.uid), {});
-            navigate("/");
-          });
-        }
-      );
-    } catch (err) {
-      console.log(err);
+    if (username == "" || email == "" || password == "" || !file) {
       setErr(true);
+    } else {
+      try {
+        const res = await createUserWithEmailAndPassword(auth, email, password);
+        const storage = getStorage();
+        const storageRef = ref(storage, `${username}.jpg`);
+        const uploadTask = uploadBytesResumable(storageRef, file);
+
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log("Upload is " + progress + "% done");
+            switch (snapshot.state) {
+              case "paused":
+                console.log("Upload is paused");
+                break;
+              case "running":
+                console.log("Upload is running");
+                break;
+            }
+          },
+          (error) => {
+            setErr(true);
+          },
+          async () => {
+            // For instance, get the download URL: https://firebasestorage.googleapis.com/...
+            getDownloadURL(uploadTask.snapshot.ref).then(
+              async (downloadURL) => {
+                await updateProfile(res.user, {
+                  displayName: username,
+                  photoURL: downloadURL,
+                });
+                // Add a new document in collection "cities"
+                await setDoc(doc(db, "user", res.user.uid), {
+                  username,
+                  email,
+                  photoURL: downloadURL,
+                  uid: res.user.uid,
+                });
+                await setDoc(doc(db, "userChats", res.user.uid), {});
+                navigate("/");
+              }
+            );
+          }
+        );
+      } catch (err) {
+        console.log(err);
+        setErr(true);
+      }
     }
   };
   return (
