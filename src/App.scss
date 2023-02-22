@@ -159,17 +159,28 @@ $gary: rgb(205, 193, 193);
             }
           }
         }
-        .search {
-          width: 94%;
-          margin-left: 1px;
+        .searchbox {
+          display: flex;
           background-color: $black;
-          border: none;
-          outline: none;
-          padding: 8px;
-          color: rgb(189, 185, 185);
-          font-size: 16px;
+          align-items: center;
           border-top: 2px solid gray;
+          .search {
+            width: 94%;
+            margin-left: 1px;
+            background-color: $black;
+            border: none;
+            outline: none;
+            padding: 8px;
+            color: rgb(189, 185, 185);
+            font-size: 16px;
+          }
+          .searchText {
+            color: #e84a4a;
+            padding-right: 10px;
+            cursor: pointer;
+          }
         }
+
         .users {
           height: 84%;
 

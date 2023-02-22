@@ -131,16 +131,21 @@ const Sidebar = (currentUser: sidebarProp) => {
           </button>
         </div>
       </div>
-      <input
-        type="text"
-        onKeyDown={handleKey}
-        value={searchUser}
-        onChange={(e) => {
-          setSearchUser(e.target.value);
-        }}
-        className="search"
-        placeholder="find a user"
-      />
+      <div className="searchbox">
+        <input
+          type="text"
+          onKeyDown={handleKey}
+          value={searchUser}
+          onChange={(e) => {
+            setSearchUser(e.target.value);
+          }}
+          className="search"
+          placeholder="find a user"
+        />
+        <span className="searchText" onClick={handleSearch}>
+          search
+        </span>
+      </div>
       {err && (
         <span
           style={{
